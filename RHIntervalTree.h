@@ -37,18 +37,26 @@
 
 #import <Foundation/Foundation.h>
 
-@class RHInterval;
+
+@protocol RHIntervalProtocol <NSObject>
+
+@required
+-(NSInteger)start;
+-(NSInteger)stop;
+
+@end
+
 
 @interface RHIntervalTree : NSObject
 
--(id)initWithIntervals:(NSArray*)intervals;
+-(id)initWithIntervalObjects:(NSArray*)intervals; //all added objects should implement the RHIntervalProtocol
 
 -(NSInteger)minStart;
 -(NSInteger)maxStop;
 
 -(NSArray*)allObjects;
 
-//Contained methods return objects contained within the start and stop(inclusive) coordinates.
+//Contained methods return objects fully contained within the start and stop(inclusive) coordinates.
 -(NSArray*)containedObjectsInRange:(NSRange)range;
 -(NSArray*)containedObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
 
@@ -56,25 +64,14 @@
 -(NSArray*)overlappingObjectsInRange:(NSRange)range;
 -(NSArray*)overlappingObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
 
-
- //all the below methods return RHInterval objects
--(NSArray*)allIntervalObjects;
-
--(NSArray*)containedIntervalObjectsInRange:(NSRange)range;
--(NSArray*)containedIntervalObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
-
--(NSArray*)overlappingIntervalObjectsInRange:(NSRange)range;
--(NSArray*)overlappingIntervalObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
-
 @end
 
-@interface RHInterval : NSObject
 
-@property (nonatomic, readonly) NSInteger start;
-@property (nonatomic, readonly) NSInteger stop;
-@property (nonatomic, readonly) NSRange range;
+//convenience object that implements the RHIntervalProtocol
+@interface RHInterval : NSObject <RHIntervalProtocol>
 
 @property (nonatomic, readonly) id<NSObject> object;
+@property (nonatomic, readonly) NSRange range;
 
 +(id)intervalWithRange:(NSRange)range object:(id<NSObject>)object;
 +(id)intervalWithStart:(NSInteger)start stop:(NSInteger)stop object:(id<NSObject>)object;
@@ -82,3 +79,4 @@
 -(id)initWithStart:(NSInteger)start stop:(NSInteger)stop object:(id<NSObject>)object;
 
 @end
+

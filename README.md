@@ -16,15 +16,18 @@ They can also be used for windowing queries, for instance, to find all roads on 
 
 ## Classes
 * RHIntervalTree - main interface to the Interval Tree.
-* RHInterval - container class for objects passed into the Interval Tree.
+* RHInterval - convenience container class for objects passed into the Interval Tree.
+* RHIntervalProtocol - RHInterval implements this protocol, so can you.
 
 
 ## Getting Started
 Include RHIntervalTree.h in your project. (RHIntervalTree.mm is a Objective-C++ file hence its extension)
 
+
 ```objectivec
     #import <RHIntervalTree.h>
 ```
+
 
 Setting up a tree.
 
@@ -36,15 +39,41 @@ Setting up a tree.
                          [RHInterval intervalWithRange:NSMakeRange(2, 8) object:@"four"],
                          nil];
     
-    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervals:intervals];
+    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervalObjects:intervals];
+        
 ```
+
 Performing a query
 
 ```objectivec
-NSArray *overlappingObjects = [tree overlappingObjectsBetweenStart:77 andStop:220];
+    NSArray *overlappingObjects = [tree overlappingObjectsBetweenStart:77 andStop:220];
 
 ```
 
+## Interface
+
+```objectivec
+
+	@interface RHIntervalTree : NSObject
+	
+	-(id)initWithIntervalObjects:(NSArray*)intervals; //all added objects should implement the RHIntervalProtocol
+	
+	-(NSInteger)minStart;
+	-(NSInteger)maxStop;
+	
+	-(NSArray*)allObjects;
+	
+	//Contained methods return objects fully contained within the start and stop(inclusive) coordinates.
+	-(NSArray*)containedObjectsInRange:(NSRange)range;
+	-(NSArray*)containedObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
+	
+	//Overlapping methods return objects which are contained or partially overlap the start and stop(inclusive) coordinates.
+	-(NSArray*)overlappingObjectsInRange:(NSRange)range;
+	-(NSArray*)overlappingObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
+	
+	@end
+
+```
 
 ## Licence
 

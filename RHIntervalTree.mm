@@ -1,5 +1,5 @@
 //
-//  RHIntervalTree.m
+//  RHIntervalTree.mm
 //  RHIntervalTree
 //
 //  Created by Richard Heard on 28/02/13.
@@ -35,12 +35,12 @@
 @implementation RHIntervalTree{
     NSInteger _min;
     NSInteger _max;
-
+    
     NSArray *_intervals;
     IntervalTree<RHInterval*> *_intervalTree;
 }
 
--(id)initWithIntervals:(NSArray *)intervals{
+-(id)initWithIntervalObjects:(NSArray *)intervals{
     if (!intervals) [NSException raise:NSInvalidArgumentException format:@"intervals must not be nil"];
     
     self = [super init];
@@ -50,7 +50,7 @@
         _min = NSIntegerMax;
         _max = NSIntegerMin;
         
-         //hold onto the array until we are dealloc'd
+        //hold onto the array until we are dealloc'd
         _intervals = [intervals copy];
         
         //setup the interval tree
@@ -83,8 +83,7 @@
 }
 
 
-#pragma mark - objects
-
+#pragma mark - interval objects
 -(NSArray*)allObjects{
     return _intervals;
 }
@@ -94,36 +93,11 @@
 }
 
 -(NSArray*)containedObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop{
-    return [[self containedIntervalObjectsBetweenStart:start andStop:stop] valueForKey:@"object"];
-}
-
-
-#pragma mark - overlapping objects
-
--(NSArray*)overlappingObjectsInRange:(NSRange)range{
-    return [self overlappingObjectsBetweenStart:range.location andStop:range.location + range.length];
-}
-
--(NSArray*)overlappingObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop{
-    return [[self overlappingIntervalObjectsBetweenStart:start andStop:stop] valueForKey:@"object"];
-}
-
-
-#pragma mark - interval objects
--(NSArray*)allIntervalObjects{
-    return _intervals;
-}
-
--(NSArray*)containedIntervalObjectsInRange:(NSRange)range{
-    return [self containedIntervalObjectsBetweenStart:range.location andStop:range.location + range.length];
-}
-
--(NSArray*)containedIntervalObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop{
     vector<Interval<RHInterval*> > resultsVector;
     _intervalTree->findContained(start, stop, resultsVector);
     
     NSMutableArray *mutableResults = [NSMutableArray arrayWithCapacity:resultsVector.size()];
-
+    
     for (typename vector<Interval<RHInterval*> >::iterator i = resultsVector.begin(); i != resultsVector.end(); ++i) {
         Interval<RHInterval*> interval = *i;
         [mutableResults addObject:interval.value];
@@ -135,11 +109,11 @@
 
 #pragma mark - interval overlapping objects
 
--(NSArray*)overlappingIntervalObjectsInRange:(NSRange)range{
-    return [self overlappingIntervalObjectsBetweenStart:range.location andStop:range.location + range.length];
+-(NSArray*)overlappingObjectsInRange:(NSRange)range{
+    return [self overlappingObjectsBetweenStart:range.location andStop:range.location + range.length];
 }
 
--(NSArray*)overlappingIntervalObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop{
+-(NSArray*)overlappingObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop{
     vector<Interval<RHInterval*> > resultsVector;
     _intervalTree->findOverlapping(start, stop, resultsVector);
     
@@ -175,7 +149,7 @@
 -(id)initWithStart:(NSInteger)start stop:(NSInteger)stop object:(id)object{
     if (start > stop) [NSException raise:NSInvalidArgumentException format:@"start must be greater than stop"];
     if (!object) [NSException raise:NSInvalidArgumentException format:@"object can not be nil"];
-
+    
     self = [super init];
     if (self){
         _start = start;
@@ -185,8 +159,20 @@
     return self;
 }
 
+-(NSInteger)start{
+    return _start;
+}
+
+-(NSInteger)stop{
+    return _stop;
+}
+
+-(id<NSObject>)object{
+    return _object;
+}
+
 -(NSRange)range{
-    //5, 10 should be (5, 6) 
+    //5, 10 should be (5, 6)
     NSRange range = NSMakeRange(_start, (_stop - _start) + 1);
     return range;
 }

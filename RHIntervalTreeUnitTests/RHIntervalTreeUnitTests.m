@@ -66,7 +66,7 @@
     
     
     // using the interval tree (contained)
-    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervals:intervals];
+    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervalObjects:intervals];
     NSMutableArray *treeCounts = [NSMutableArray array];
     t0 = clock() / (CLOCKS_PER_SEC / 1000);
     
@@ -122,7 +122,7 @@
                          [RHInterval intervalWithRange:NSMakeRange(5, 5) object:testObject],
                          nil];
     
-    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervals:intervals];
+    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervalObjects:intervals];
 
     
     STAssertTrue(tree.minStart == 2, @"minStart is not right");
@@ -130,37 +130,6 @@
     [tree release];
 }
 
-
--(void)testRHIntervalTreeOverlapping{
-    NSString *testObject = @"test";
-    NSString *overlappingObject = @"overlap";
-    
-    NSArray *intervals = [NSArray arrayWithObjects:
-                          [RHInterval intervalWithRange:NSMakeRange(1, 1) object:testObject],
-                          [RHInterval intervalWithRange:NSMakeRange(3, 1) object:testObject],
-                          [RHInterval intervalWithRange:NSMakeRange(5, 1) object:testObject],
-                          [RHInterval intervalWithRange:NSMakeRange(7, 1) object:testObject],
-                          [RHInterval intervalWithRange:NSMakeRange(9, 1) object:testObject],
-                          [RHInterval intervalWithRange:NSMakeRange(11,1) object:overlappingObject],
-                          [RHInterval intervalWithRange:NSMakeRange(13,1) object:overlappingObject],
-                          [RHInterval intervalWithRange:NSMakeRange(15,1) object:testObject],
-                          [RHInterval intervalWithRange:NSMakeRange(12,2) object:overlappingObject],
-                          nil];
-    
-    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervals:intervals];
-
-    
-    //TODO:
-//    
-//    NSArray *results = [tree overlappingIntervalObjects];
-//    STAssertTrue(results.count == 3, @"count is not right");
-//
-//    for (NSString *obj in results) {
-//        STAssertEqualObjects(overlappingObject, obj, @"overlapping object was not right");
-//    }
-//        
-    [tree release];
-}
 
 -(void)testRHIntervalTreeContained{
     NSString *testObject = @"test";
@@ -174,21 +143,50 @@
                           [RHInterval intervalWithRange:NSMakeRange(9, 1) object:testObject],
                           [RHInterval intervalWithRange:NSMakeRange(11,1) object:overlappingObject],
                           [RHInterval intervalWithRange:NSMakeRange(13,1) object:overlappingObject],
-                          [RHInterval intervalWithRange:NSMakeRange(15,1) object:testObject],
+                          [RHInterval intervalWithRange:NSMakeRange(15,2) object:testObject],
                           [RHInterval intervalWithRange:NSMakeRange(12,2) object:overlappingObject],
                           nil];
     
-    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervals:intervals];
+    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervalObjects:intervals];
+
+    
+    NSArray *results = [tree containedObjectsBetweenStart:10 andStop:15];
+    STAssertTrue(results.count == 3, @"count is not right");
+
+    for (RHInterval *obj in results) {
+        STAssertEqualObjects(overlappingObject, [obj object], @"contained object was not right");
+    }
+        
+    [tree release];
+}
+
+-(void)testRHIntervalTreeOverlapping{
+    NSString *testObject = @"test";
+    NSString *overlappingObject = @"overlap";
+    
+    NSArray *intervals = [NSArray arrayWithObjects:
+                          [RHInterval intervalWithRange:NSMakeRange(1, 1) object:testObject],
+                          [RHInterval intervalWithRange:NSMakeRange(3, 1) object:testObject],
+                          [RHInterval intervalWithRange:NSMakeRange(5, 1) object:testObject],
+                          [RHInterval intervalWithRange:NSMakeRange(7, 1) object:testObject],
+                          [RHInterval intervalWithRange:NSMakeRange(9, 1) object:testObject],
+                          [RHInterval intervalWithRange:NSMakeRange(11,1) object:overlappingObject],
+                          [RHInterval intervalWithRange:NSMakeRange(13,1) object:overlappingObject],
+                          [RHInterval intervalWithRange:NSMakeRange(15,2) object:overlappingObject],
+                          [RHInterval intervalWithRange:NSMakeRange(12,2) object:overlappingObject],
+                          nil];
+    
+    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervalObjects:intervals];
     
 
-    //TODO:
-//    NSArray *results = [tree overlappingIntervalObjects];
-//    STAssertTrue(results.count == 3, @"count is not right");
-//    
-//    for (NSString *obj in results) {
-//        STAssertEqualObjects(overlappingObject, obj, @"overlapping object was not right");
-//    }
-//    
+
+    NSArray *results = [tree overlappingObjectsBetweenStart:10 andStop:15];
+    STAssertTrue(results.count == 4, @"overlapping count is not right");
+    
+    for (RHInterval *obj in results) {
+        STAssertEqualObjects(overlappingObject, [obj object], @"overlapping object was not right");
+    }
+    
     [tree release];
 }
 
