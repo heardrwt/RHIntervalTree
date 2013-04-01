@@ -25,28 +25,28 @@ Include RHIntervalTree.h in your project. (RHIntervalTree.mm is a Objective-C++ 
 
 
 ```objectivec
-    #import <RHIntervalTree.h>
+#import <RHIntervalTree.h>
 ```
 
 
 Setting up a tree.
 
 ```objectivec
-    NSArray *intervals = [NSArray arrayWithObjects:
-                         [RHInterval intervalWithRange:NSMakeRange(5, 3) object:@"one"],
-                         [RHInterval intervalWithRange:NSMakeRange(7, 100) object:@"two"],
-                         [RHInterval intervalWithRange:NSMakeRange(5, 5) object:@"three"],
-                         [RHInterval intervalWithRange:NSMakeRange(2, 8) object:@"four"],
-                         nil];
-    
-    RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervalObjects:intervals];
+NSArray *intervals = [NSArray arrayWithObjects:
+                     [RHInterval intervalWithRange:NSMakeRange(5, 3) object:@"one"],
+                     [RHInterval intervalWithRange:NSMakeRange(7, 100) object:@"two"],
+                     [RHInterval intervalWithRange:NSMakeRange(5, 5) object:@"three"],
+                     [RHInterval intervalWithRange:NSMakeRange(2, 8) object:@"four"],
+                     nil];
+
+RHIntervalTree *tree = [[RHIntervalTree alloc] initWithIntervalObjects:intervals];
         
 ```
 
 Performing a query
 
 ```objectivec
-    NSArray *overlappingObjects = [tree overlappingObjectsBetweenStart:77 andStop:220];
+NSArray *overlappingObjects = [tree overlappingObjectsBetweenStart:77 andStop:220];
 
 ```
 
@@ -54,24 +54,24 @@ Performing a query
 
 ```objectivec
 
-	@interface RHIntervalTree : NSObject
-	
-	-(id)initWithIntervalObjects:(NSArray*)intervals; //all added objects should implement the RHIntervalProtocol
-	
-	-(NSInteger)minStart;
-	-(NSInteger)maxStop;
-	
-	-(NSArray*)allObjects;
-	
-	//Contained methods return objects fully contained within the start and stop(inclusive) coordinates.
-	-(NSArray*)containedObjectsInRange:(NSRange)range;
-	-(NSArray*)containedObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
-	
-	//Overlapping methods return objects which are contained or partially overlap the start and stop(inclusive) coordinates.
-	-(NSArray*)overlappingObjectsInRange:(NSRange)range;
-	-(NSArray*)overlappingObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
-	
-	@end
+@interface RHIntervalTree : NSObject
+
+-(id)initWithIntervalObjects:(NSArray*)intervals; //all added objects should implement the RHIntervalProtocol
+
+-(NSInteger)minStart;
+-(NSInteger)maxStop;
+
+-(NSArray*)allObjects;
+
+//Contained methods return objects fully contained within the start and stop(inclusive) coordinates.
+-(NSArray*)containedObjectsInRange:(NSRange)range;
+-(NSArray*)containedObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
+
+//Overlapping methods return objects which are contained or partially overlap the start and stop(inclusive) coordinates.
+-(NSArray*)overlappingObjectsInRange:(NSRange)range;
+-(NSArray*)overlappingObjectsBetweenStart:(NSInteger)start andStop:(NSInteger)stop;
+
+@end
 
 ```
 
